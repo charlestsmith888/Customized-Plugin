@@ -117,6 +117,7 @@ a:hover.ui-state-active {
   display: block;
   padding: .2em;
   text-align: center;
+  text-decoration: none;
 }
 #message, .update-nag, .notice, .updated, .error {
     display: none !important;

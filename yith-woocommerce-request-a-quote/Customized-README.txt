@@ -1,0 +1,1 @@
+﻿We changed the whole functionality of this plugin. The issue was to add the all attribute in the quote form but this was not able to do this, this plugin was using their own custom session thats why they couldnt. we have integrated this plugin with woocoommerce cart session whenever you select any attribute of any product it will be selected in the form. 
