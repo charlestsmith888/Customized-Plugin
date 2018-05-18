@@ -1,4 +1,10 @@
-<?php do_action('pro_property_scripts');
+<div style="display: none;">
+<?php 
+
+if (!empty($_GET['id'])) {
+	$_GET['post'] = $_GET['id'];
+}
+
 if (!empty($_GET['post'])) {
 	$varrr = get_post_meta( $_GET['post'], 'customfiels', true);
 	$metaexterior = get_post_meta( $_GET['post'], 'metaexterior', true);
@@ -426,6 +432,8 @@ $interior 	= get_option( 'Default_interior');
 	</div>
 </div>
 </div><!-- End of the row -->
+
+</div><!-- Display none div-->
 <script>
 	function totalexterior(){
 		var e = 0;

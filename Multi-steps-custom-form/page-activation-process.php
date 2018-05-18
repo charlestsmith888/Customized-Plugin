@@ -8,18 +8,6 @@ $fp_options = nectar_get_full_page_options();
 extract($fp_options);?>
 <style>
 .isa_error{color: #D8000C;background-color: #FFBABA;}.isa_error{margin: 10px 0;padding: 12px;}.isa_error:before{font-family: isabelc;font-style: normal;font-weight: 400;speak: none;display: inline-block;text-decoration: inherit;width: 1em;margin-right: .2em;text-align: center;font-variant: normal;text-transform: none;line-height: 1em;margin-left: .2em;-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;}.isa_error a {float: right;margin-right: 2%;font-size: 20px;text-transform: uppercase;font-weight: 700;color: #D8000C;}
-
-.isa_error {
-    float: left !important;
-    padding: 30px !important;
-    text-align: center !important;
-}
-.isa_error a {
-    float: none !important;
-    display: table !important;
-    margin: 0px auto !important;
-    margin-top:  20px !important;
-}
 </style>
 <div class="container-wrap">
 	<div class="<?php if($page_full_screen_rows != 'on') echo 'container'; ?> main-content">
@@ -37,10 +25,11 @@ extract($fp_options);?>
 
 
 
-
-
 if (!empty($_POST)) {
 global $wpdb;
+
+
+
 
 
 //mian array
@@ -48,7 +37,7 @@ $data = array(
 	'carrier' => $_POST['item']['carrier'],
 	'dsc' => $_POST['item']['dsc'],
 	'amount' => $_POST['item']['amount'],
-	'billing_phone' => $_POST['billing']['billing_phone'],
+	'billing_phone' => 'testingdata',
 	'primary_email' => $_POST['billing']['primary_email'],
 	'billing_street' => $_POST['billing']['billing_street1'],
 	'billing_city' => $_POST['billing']['billing_city'],
@@ -61,8 +50,39 @@ $data = array(
 	'source' => $_POST['paymentmethod'],
 );
 
+if (isset($_POST['option1'])) {
+	$option = $_POST['option1'];
+}elseif (isset($_POST['option2'])) {
+	$option = $_POST['option2'];
+}else{
+	$option = '';
+}
+
+
+$basic1 = array(
+	'billing' => $_POST['billing'], 
+	'shipping' => $_POST['shipping'], 
+);
+$basic1 = json_encode($basic1);
+
+$basic2 = array(
+	'option' => $option, 
+	'iteminfo' => $_POST['item'], 
+);
+$basic2 = json_encode($basic2);
+
+$dataaaa = array(
+	'content' 	=> 	$basic1,
+	'content2' 	=> 	$basic2,
+	'status' => 'PENDING',
+	'TRANSACTIONID' => 'NULL',
+	'source' => $_POST['paymentmethod'],
+);
+
+
+
 if (!empty($_POST) and $_POST['paymentmethod'] == 'paypal') {
-	$wpdb->insert('wp_payments' , $data);
+	$wpdb->insert('wp_payments_2' , $dataaaa);
 	$lastid = $wpdb->insert_id;
 	$sandbox = false;
 	$url = $sandbox ? 'https://www.sandbox.paypal.com/cgi-bin/webscr' : 'https://www.paypal.com/cgi-bin/webscr';
@@ -84,10 +104,10 @@ if (!empty($_POST) and $_POST['paymentmethod'] == 'paypal') {
 	<input type="hidden" name="night_phone_a" value="'.$data['billing_phone'].'">
 	<input type="hidden" name="email" value="'.$data['primary_email'].'">
 
-	<input type="hidden" name="return" value="'.site_url('/success/?paypal='.$lastid).'">
+
+	<input type="hidden" name="return" value="'.site_url('/success/?activation=true&paypal='.$lastid).'">
 	<p>Redirecting to Paypal....</p>
 	<input type="image" src="'.site_url().'/wp-content/uploads/2018/04/loading.gif" name="PP-submit" alt="Make a donation with PayPal"><br>
-
 	</form>
 	';
 
@@ -151,7 +171,7 @@ if (!empty($_POST) and $_POST['paymentmethod'] == 'paypal') {
 
 
 
-	// echo "<script>window.location = '".site_url('/success/')."'</script>";
+
 	// authorize.net integration
 
 	$objAuthorizeAPI = new AuthorizeAPI('8vRh48C9', '4NS6Ha6228rj8Hwg' , 'liveMode');
@@ -174,7 +194,7 @@ if (!empty($_POST) and $_POST['paymentmethod'] == 'paypal') {
 	$objAuthorizeAPI->setCreditCardParameters($_POST['payment']['cc_number'], $_POST['payment']['cc_exp_year'].'-'.$_POST['payment']['cc_exp_month'], $_POST['payment']['cc_cvv']);
 	// $data['status'] = 'pending';
 	$data['TRANSACTIONID'] = 'null';
-	$wpdb->insert('wp_payments' , $data);
+	$wpdb->insert('wp_payments_2' , $dataaaa);
 	$lastid = $wpdb->insert_id;
 
 	$arrCustomerAddCCResponse = $objAuthorizeAPI->addCustomerPaymentProfile($lastid,'cc');
@@ -187,6 +207,9 @@ if (!empty($_POST) and $_POST['paymentmethod'] == 'paypal') {
 	$checkcs = json_decode($arrCustomerAddCCResponse);
 
 
+	
+
+
 
 	if (!empty($checkcs) and !empty($checkcs->customerProfileId) and !empty($checkcs->customerPaymentProfileId)) {
 
@@ -197,67 +220,58 @@ if (!empty($_POST) and $_POST['paymentmethod'] == 'paypal') {
 			'TRANSACTIONID' => $arrChargeResponsecheck->transId, 
 			'status' => 'Completed', 
 		);
-		$wpdb->update('wp_payments', $dataaa, ['id' => $lastid ]);
+		$wpdb->update('wp_payments_2', $dataaa, ['id' => $lastid ]);
 
 
-
-	// $data['carrier']
-	// $data['dsc']
-	// $data['amount']
-	// $data['billing_phone']
-
+		
 		$headers = array('Content-Type: text/html; charset=UTF-8');
 $message = '
 <div style="display: inline-block; padding: 16px 32px 13px 37px !important; color: #fff !important; font-size: 18px !important;  width: 55%; display: table; text-align: center; margin:0px auto;">
 	<h3 style="background-color: #eeeeefad; padding: 16px; text-transform: uppercase; color: #4CCCDB;">Dear Admin,</h3>
 	<span style="text-transform: uppercase; font-weight: bold !important; color: #000;">Billing Information are as follows: </span>
 
-<table style="font-size: 12px;line-height: 20px;">
-	<thead>
-		<tr>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Order Id</th>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Carrier</th>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Description</th>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Amount</th>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Wireless number</th>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">First Name</th>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Last Name</th>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Company Name</th>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Street Address</th>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">City</th>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Zip Code </th>
-			<th style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Country </th>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Phone Number</th>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Email</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-		
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$lastid.'</th>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$data['carrier'].'</th>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$data['dsc'].'</th>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$data['amount'].'</th>
-			<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$data['billing_phone'].'</th>
-			<td  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$arrCustomerInfo['firstname'].'</td>
-			<td  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$arrCustomerInfo['lastname'].'</td>
-			<td  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$arrCustomerInfo['company_name'].'</td>
-			<td  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$arrCustomerInfo['ad_street'].'</td>
-			<td  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$arrCustomerInfo['ad_city'].'</td>
-			<td style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;" >'.$arrCustomerInfo['ad_zip'].'</td>
-			<td  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$arrCustomerInfo['ad_country'].'</td>
-			<td  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$arrCustomerInfo['ph_number'].'</td>
-			<td  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$arrCustomerInfo['em_email'].'</td>
-		</tr>
-	</tbody>
-</table>
+	<table style="font-size: 12px;line-height: 20px;">
+		<thead>
+			<tr>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Order Id</th>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Carrier</th>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Description</th>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Amount</th>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Wireless number</th>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">First Name</th>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Last Name</th>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Company Name</th>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Street Address</th>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">City</th>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Zip Code </th>
+				<th style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Country </th>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Phone Number</th>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">Email</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$lastid.'</th>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$data['carrier'].'</th>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$data['dsc'].'</th>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$data['amount'].'</th>
+				<th  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$data['billing_phone'].'</th>
+				<td  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$arrCustomerInfo['firstname'].'</td>
+				<td  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$arrCustomerInfo['lastname'].'</td>
+				<td  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$arrCustomerInfo['company_name'].'</td>
+				<td  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$arrCustomerInfo['ad_street'].'</td>
+				<td  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$arrCustomerInfo['ad_city'].'</td>
+				<td style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;" >'.$arrCustomerInfo['ad_zip'].'</td>
+				<td  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$arrCustomerInfo['ad_country'].'</td>
+				<td  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$arrCustomerInfo['ph_number'].'</td>
+				<td  style="background: #eeeeefad !important; padding:  16px !important; text-transform: capitalize; color: #000;">'.$arrCustomerInfo['em_email'].'</td>
+			</tr>
+		</tbody>
+	</table>
 </div>
 ';
-
-//
-
 wp_mail('simonchen@silkroadtradinginc.com', 'Billing Information ', $message, $headers);
-
+		
 		echo "<script>window.location = '".site_url('/success/')."'</script>";
 
 	}else{
@@ -282,6 +296,10 @@ wp_mail('simonchen@silkroadtradinginc.com', 'Billing Information ', $message, $h
 }
 
 
+
+
+
+
 } //Endif ?>
 
 
@@ -291,17 +309,17 @@ wp_mail('simonchen@silkroadtradinginc.com', 'Billing Information ', $message, $h
 
 
 
-			<?php
-			if($page_full_screen_rows == 'on') echo '</div>'; ?>
-			</div><!--/row-->
-			
-			</div><!--/container-->
-			
-			</div><!--/container-wrap-->
-			<?php get_footer(); ?>
+<?php
+if($page_full_screen_rows == 'on') echo '</div>'; ?>
+</div><!--/row-->
+
+</div><!--/container-->
+
+</div><!--/container-wrap-->
+<?php get_footer(); ?>
 
 
-			<script type="text/javascript">
+<script type="text/javascript">
 	jQuery(document).ready(function() {
 		jQuery("#my-form-paypalll").trigger('submit');
 	});

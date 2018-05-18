@@ -1,5 +1,4 @@
 <?php 
-
 /**
  * Registers a new post type
  * @uses $wp_post_types Inserts new post type object into the list
@@ -11,20 +10,19 @@
 function CS_form_fields() {
 
 	$labels = array(
-		'name'               => __( 'Companies FORM', 'text-domain' ),
+		'name'               => __( 'Refil Form', 'text-domain' ),
 		'singular_name'      => __( 'Company', 'text-domain' ),
-		'add_new'            => _x( 'Add New Company', 'text-domain', 'text-domain' ),
-		'add_new_item'       => __( 'Add New Company', 'text-domain' ),
+		'add_new'            => _x( 'Add Refil', 'text-domain', 'text-domain' ),
+		'add_new_item'       => __( 'Add Refil', 'text-domain' ),
 		'edit_item'          => __( 'Edit Company', 'text-domain' ),
-		'new_item'           => __( 'New Company', 'text-domain' ),
+		'new_item'           => __( 'Refil', 'text-domain' ),
 		'view_item'          => __( 'View Company', 'text-domain' ),
-		'search_items'       => __( 'Search Companies FORM', 'text-domain' ),
-		'not_found'          => __( 'No Companies FORM found', 'text-domain' ),
-		'not_found_in_trash' => __( 'No Companies FORM found in Trash', 'text-domain' ),
+		'search_items'       => __( 'Search Refil Form', 'text-domain' ),
+		'not_found'          => __( 'No Refil Form found', 'text-domain' ),
+		'not_found_in_trash' => __( 'No Refil Form found in Trash', 'text-domain' ),
 		'parent_item_colon'  => __( 'Parent Company:', 'text-domain' ),
-		'menu_name'          => __( 'Companies FORM', 'text-domain' ),
+		'menu_name'          => __( 'Refil Form', 'text-domain' ),
 	);
-
 	$args = array(
 		'labels'              => $labels,
 		'hierarchical'        => false,
@@ -51,16 +49,77 @@ function CS_form_fields() {
 			'excerpt',
 		),
 	);
-
 	register_post_type( 'customform', $args );
+
 }
-
-add_action( 'init', 'CS_form_fields' );
-
+add_action( 'init', 'CS_form_fields');
 
 
+function admin_head_function_exec(){
+	echo '<style>li#menu-posts-customform li:nth-child(6) {display: none;}</style>';
+}
+add_action( 'admin_head', 'admin_head_function_exec');
+
+/**
+ * Registers a new post type
+ * @uses $wp_post_types Inserts new post type object into the list
+ *
+ * @param string  Post type key, must not exceed 20 characters
+ * @param array|string  See optional args description above.
+ * @return object|WP_Error the registered post type object, or an error object
+ */
+function activation_form() {
+	$labels = array(
+		'name'               => __( 'Activation Form', 'text-domain' ),
+		'singular_name'      => __( 'Activation Form', 'text-domain' ),
+		'add_new'            => _x( 'Add New Activation Form', 'text-domain', 'text-domain' ),
+		'add_new_item'       => __( 'Add New Activation Form', 'text-domain' ),
+		'edit_item'          => __( 'Edit Activation Form', 'text-domain' ),
+		'new_item'           => __( 'New Activation Form', 'text-domain' ),
+		'view_item'          => __( 'View Activation Form', 'text-domain' ),
+		'search_items'       => __( 'Search Activation Form', 'text-domain' ),
+		'not_found'          => __( 'No Activation Form found', 'text-domain' ),
+		'not_found_in_trash' => __( 'No Activation Form found in Trash', 'text-domain' ),
+		'parent_item_colon'  => __( 'Parent Activation Form:', 'text-domain' ),
+		'menu_name'          => __( 'Activation Form', 'text-domain' ),
+	);
+	$args = array(
+		'labels'              => $labels,
+		'hierarchical'        => false,
+		'description'         => 'description',
+		'taxonomies'          => array(),
+		'public'              => true,
+		'show_ui'             => true,
+		'show_in_menu'        => 'edit.php?post_type=customform',
+		'show_in_admin_bar'   => true,
+		'menu_position'       => null,
+		'menu_icon'           => null,
+		'show_in_nav_menus'   => true,
+		'publicly_queryable'  => true,
+		'exclude_from_search' => false,
+		'has_archive'         => true,
+		'query_var'           => true,
+		'can_export'          => true,
+		'rewrite'             => true,
+		'capability_type'     => 'post',
+		'supports'            => array(
+			'title',
+			'editor',
+			'thumbnail',
+			'excerpt',
+		),
+	);
+
+	register_post_type( 'activation_form', $args );
+}
+add_action( 'init', 'activation_form' );
+
+add_submenu_page('edit.php?post_type=customform', __('Test Settings','menu-test'), __('Refil Inquiries','menu-test'), 'manage_options', 'listing_setting', 'mt_settings_page' );
+add_submenu_page('edit.php?post_type=customform', __('Test Settings','menu-test'), __('Activation Inquiries','menu-test'), 'manage_options', 'activation_listing_setting', 'activation_inquiries_listing' );
+// add_submenu_page('edit.php?post_type=customform', __('Activation Form','menu-test'), __('Activation Form','menu-test'), 'manage_options', null, null);
 // Custom FIelds
-
+function mt_settings_page(){require_once 'inquiries.php';}
+function activation_inquiries_listing(){require_once 'inquiries_activation.php';}
 
 
 function ul_pro_custom_fields_add_meta_box() {
@@ -73,7 +132,14 @@ function ul_pro_custom_fields_add_meta_box() {
 		'advanced',
 		'high'
 	);	
-
+	add_meta_box(
+		'custom_fields-custom-fields_buttons1',
+		__( 'Add linked Buttons', 'custom_fields_buttons' ),
+		'ul_pro_custom_buttons',
+		'activation_form',
+		'advanced',
+		'high'
+	);	
 
 }
 add_action( 'add_meta_boxes', 'ul_pro_custom_fields_add_meta_box' );
@@ -166,8 +232,8 @@ function OBL_print_view()
 {
     // Check for correct post_type
 	global $post;
-    if( 'customform' != $post->post_type )// here you can set post type name
-    return;
+    // if( 'customform' != $post->post_type || 'activation_form' != $post->post_type)// here you can set post type name
+    // return;
     ?>  
     <style type="text/css">
     #add_field_row, .full-width{width: 100%;float: left;}
@@ -260,3 +326,9 @@ function OBL_gallery_update( $post_id, $post_object ){
 
 		return false;
 	}
+
+
+add_submenu_page('edit.php?post_type=customform', __('Coupons','menu-test'), __('Coupons','menu-test'), 'manage_options', 'cs_coupons_addding', 'cs_coupons_addding' );
+function cs_coupons_addding(){
+	require_once 'cs_couponss.php';
+}

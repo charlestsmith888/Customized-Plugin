@@ -4,7 +4,6 @@ if (!empty($_GET['post'])) {
 	$metaexterior = get_post_meta( $_GET['post'], 'metaexterior', true);
 	$metainterior = get_post_meta( $_GET['post'], 'metainterior', true);
 	$metagarage = get_post_meta( $_GET['post'], 'metagarage', true);
-	$property_arv = get_post_meta( $_GET['post'], 'property_arv', false);
 }
 $exterior 	= get_option( 'Default_exterior');
 $garage 	= get_option( 'Default_garage');
@@ -111,40 +110,13 @@ $interior 	= get_option( 'Default_interior');
 										<?php if (!empty($metaexterior[$exterior['key'][$key]]['qty'])): ?>
 											<option value="<?php echo $metaexterior[$exterior['key'][$key]]['qty']; ?>"><?php echo $metaexterior[$exterior['key'][$key]]['qty']; ?></option>
 										<?php endif ?>
-										<option value="1">1</option>
+										<option>0</option>
 										<option value="2">2</option>
 										<option value="3">3</option>
 										<option value="4">4</option>
 										<option value="5">5</option>
 										<option value="6">6</option>
-										<option value="7">7</option>
-										<option value="8">8</option>
-										<option value="9">9</option>
-										<option value="10">10</option>
 									</select>
-							
-								<?php elseif($exterior['isqty'][$key] == 'sqft'): ?>
-									
-
-								<select onchange="qtymultiply(this)" name="metaexterior[<?php echo $exterior['key'][$key] ?>][qty]">
-									<?php if (!empty($metaexterior[$exterior['key'][$key]]['qty'])): ?>
-									<option value="<?php echo $metaexterior[$exterior['key'][$key]]['qty']; ?>">Sq Feet <?php echo $metaexterior[$exterior['key'][$key]]['qty']; ?></option>
-									<?php endif ?>
-									<option value="1">Sq Feet 1</option>
-									<option value="2">Sq Feet 2</option>
-									<option value="3">Sq Feet 3</option>
-									<option value="4">Sq Feet 4</option>
-									<option value="5">Sq Feet 5</option>
-									<option value="6">Sq Feet 6</option>
-									<option value="7">Sq Feet 7</option>
-									<option value="8">Sq Feet 8</option>
-									<option value="9">Sq Feet 9</option>
-									<option value="10">Sq Feet 10</option>
-									<option value="11">Sq Feet 11</option>
-									<option value="12">Sq Feet 12</option>
-								</select>
-
-
 								<?php endif ?>
 							</td>
 							<td>
@@ -200,48 +172,13 @@ $interior 	= get_option( 'Default_interior');
 										<?php if (!empty($metainterior[$interior['key'][$key]]['qty'])): ?>
 											<option value="<?php echo $metainterior[$interior['key'][$key]]['qty']; ?>"><?php echo $metainterior[$interior['key'][$key]]['qty']; ?></option>
 										<?php endif ?>
-										<option value="1">1</option>
+										<option>0</option>
 										<option value="2">2</option>
 										<option value="3">3</option>
 										<option value="4">4</option>
 										<option value="5">5</option>
 										<option value="6">6</option>
-										<option value="7">7</option>
-										<option value="8">8</option>
-										<option value="9">9</option>
-										<option value="10">10</option>
 									</select>
-
-
-
-
-
-								<?php elseif($interior['isqty'][$key] == 'sqft'): ?>
-									
-
-								<select onchange="qtymultiply(this)" name="metainterior[<?php echo $interior['key'][$key] ?>][qty]">
-									<?php if (!empty($metainterior[$interior['key'][$key]]['qty'])): ?>
-										<option value="<?php echo $metainterior[$interior['key'][$key]]['qty']; ?>">Sq Feet <?php echo $metainterior[$interior['key'][$key]]['qty']; ?></option>
-									<?php endif ?>
-									<option value="1">Sq Feet 1</option>
-									<option value="2">Sq Feet 2</option>
-									<option value="3">Sq Feet 3</option>
-									<option value="4">Sq Feet 4</option>
-									<option value="5">Sq Feet 5</option>
-									<option value="6">Sq Feet 6</option>
-									<option value="7">Sq Feet 7</option>
-									<option value="8">Sq Feet 8</option>
-									<option value="9">Sq Feet 9</option>
-									<option value="10">Sq Feet 10</option>
-									<option value="11">Sq Feet 11</option>
-									<option value="12">Sq Feet 12</option>
-								</select>
-
-
-
-
-
-
 								<?php endif ?>
 							</td>
 							<td>
@@ -297,48 +234,13 @@ $interior 	= get_option( 'Default_interior');
 										<?php if (!empty($metagarage[$garage['key'][$key]]['qty'])): ?>
 											<option value="<?php echo $metagarage[$garage['key'][$key]]['qty']; ?>"><?php echo $metagarage[$garage['key'][$key]]['qty']; ?></option>
 										<?php endif ?>
-										<option value="1">1</option>
+										<option>0</option>
 										<option value="2">2</option>
 										<option value="3">3</option>
 										<option value="4">4</option>
 										<option value="5">5</option>
 										<option value="6">6</option>
-										<option value="7">7</option>
-										<option value="8">8</option>
-										<option value="9">9</option>
-										<option value="10">10</option>
 									</select>
-
-
-
-
-
-								<?php elseif($garage['isqty'][$key] == 'sqft'): ?>
-									
-
-								
-									<select onchange="qtymultiply(this)" name="metagarage[<?php echo $garage['key'][$key] ?>][qty]">
-										<?php if (!empty($metagarage[$garage['key'][$key]]['qty'])): ?>
-											<option value="<?php echo $metagarage[$garage['key'][$key]]['qty']; ?>">Sq Feet <?php echo $metagarage[$garage['key'][$key]]['qty']; ?></option>
-										<?php endif ?>
-										<option value="1">Sq Feet 1</option>
-										<option value="2">Sq Feet 2</option>
-										<option value="3">Sq Feet 3</option>
-										<option value="4">Sq Feet 4</option>
-										<option value="5">Sq Feet 5</option>
-										<option value="6">Sq Feet 6</option>
-										<option value="7">Sq Feet 7</option>
-										<option value="8">Sq Feet 8</option>
-										<option value="9">Sq Feet 9</option>
-										<option value="10">Sq Feet 10</option>
-										<option value="11">Sq Feet 11</option>
-										<option value="12">Sq Feet 12</option>
-									</select>
-
-
-
-
-
 								<?php endif ?>
 							</td>
 							<td>
@@ -367,18 +269,9 @@ $interior 	= get_option( 'Default_interior');
 </div>
 <!-- Total -->
 <div class="col-md-6">
-
-	
-
 	<div class="card bg-light mb-3" style="width: 100% !important;max-width: 100%!important;">
 		<div class="card-header">Total</div>
 		<div class="card-body">
-
-			<label>
-			ARV
-			<input type="text" name="property_arv" class="form-control" placeholder="ARV" value="<?php if(!empty($property_arv)){ echo $property_arv[0]; } ?>">
-			</label>
-
 			<table class="table table-condensed table-hover">
 				<tbody>
 					<tr>
@@ -400,18 +293,6 @@ $interior 	= get_option( 'Default_interior');
 						<td><strong>Garage</strong></td>
 						<td>
 							<p id="totalgarbage"><?php echo $garage_total; $overal_total += $garage_total; ?></p>
-						</td>
-					</tr>
-					<tr>
-						<td><strong>MAO Formula</strong></td>
-						<td>
-							<p>
-								<?php 
-								if(!empty($property_arv)){ 
-									echo $property_arv[0]*0.7-$overal_total; 
-								} 
-								?>
-							</p>
 						</td>
 					</tr>
 					<tr>

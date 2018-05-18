@@ -7,9 +7,6 @@
 * @param array|string  See optional args description above.
 * @return object|WP_Error the registered post type object, or an error object
 */
-
-require 'seller_sheet_class.php';
-
 function cs_property_calculations() {
 	$labels = array(
 		'name'               => __( 'Properties', 'text-domain' ),
@@ -87,11 +84,6 @@ function pro_custom_fields_add_meta_box() {
 add_action( 'add_meta_boxes', 'pro_custom_fields_add_meta_box' );
 function ul_pro_custom_fields_html_____(){require 'metabox.php'; }
 function pro_custom_fields_save( $post_id ) {
-
-	// Arv
-	if (isset( $_POST['property_arv'] )) {
-		update_post_meta( $post_id, 'property_arv', $_POST['property_arv']);
-	}
 	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
 	if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 	if ( isset( $_POST['customfiels'] ) ){ update_post_meta( $post_id, 'customfiels', $_POST['customfiels'] );}
@@ -125,15 +117,6 @@ function pro_custom_fields_save( $post_id ) {
 add_action( 'save_post', 'pro_custom_fields_save' );
 
 
-
-// Add Menu
-function cs_menu_in_property(){
-	add_submenu_page( 'edit.php?post_type=properties', 'Seller Net Sheet', 'Seller Net Sheet', 'manage_options', 'seller_net_sheet', 'seller_net_sheet' );
-}
-function seller_net_sheet(){
-	require 'cs_seller_sheet.php';
-}
-add_action( 'admin_menu', 'cs_menu_in_property', 10 );
 
 // // Interior update Defaults
 // add_option( 'Default_garage', 'a:3:{s:4:"name";a:5:{i:0;s:4:"Roof";i:1;s:5:"Paint";i:2;s:6:"Siding";i:3;s:12:"Garage Doors";i:4;s:12:"Service Door";}s:3:"key";a:5:{i:0;s:8:"gar_Roof";i:1;s:9:"gar_Paint";i:2;s:10:"gar_Siding";i:3;s:16:"gar_Garage_Doors";i:4;s:16:"gar_Service_Door";}s:5:"isqty";a:5:{i:0;s:3:"yes";i:1;s:3:"yes";i:2;s:2:"no";i:3;s:3:"yes";i:4;s:3:"yes";}}');
